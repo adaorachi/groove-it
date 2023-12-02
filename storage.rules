@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /users/{userId}/{imageName} {
+      allow read, update, create: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    match /myPlaylists/{document=**}  {
+      allow read, update, create, delete: if request.auth.uid != null;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isUserExist() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isSignedIn() {
+    return request.auth != null;
+    }
+   
+    function isDocsOwner(userId) {
+      return request.auth.uid == userId
+    }
+   
+    function existingData() {
+    return resource.data;
+    }
+   
+    function incomingData() {
+    return request.resource.data;
+    }
+   
+    match /users/{userId} {
+      allow create: if isSignedIn();
+      allow delete, update, read: if isSignedIn() && isUserExist() && isDocsOwner(userId);
+    }
+   
+    match /recentPlayed/{docId} {
+      allow create: if isSignedIn() && isUserExist();
+      allow delete, read: if isSignedIn() && isUserExist() && isDocsOwner(docId);
+      allow update: if isSignedIn() && isUserExist() && isDocsOwner(docId) && existingData().playlist_ids.size() <= 6;
+    }
+   
+     match /myPlaylists/{docId} {
+      allow create: if isSignedIn() && isUserExist();
+      allow delete, read: if isSignedIn() && isUserExist() && isDocsOwner(existingData().user_id);
+      allow update: if isSignedIn() && isUserExist() && isDocsOwner(existingData().user_id) && existingData().track_ids.size() <= 10;
+    }
+   
+    match /favouritePlaylists/{docId} {
+      allow create: if isSignedIn() && isUserExist();
+      allow delete, read: if isSignedIn() && isUserExist() && isDocsOwner(docId);
+      allow update: if isSignedIn() && isUserExist() && isDocsOwner(docId) && existingData().playlist_ids.size() <= 10;
+    }
+  }
+}

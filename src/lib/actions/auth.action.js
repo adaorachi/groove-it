@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -19,15 +20,15 @@ import { fbSetDoc } from "@/lib/helpers";
 import { useNotification } from "@/hooks";
 import { auth, googleProvider, githubProvider } from "@/configs";
 
-import { useGetProfile } from "./profile.action";
-
 export const useAuthState = () => {
-  const { getCurrentUser } = useCurrentUser();
-
-  const profile = useGetProfile();
+  const {
+    getCurrentUser,
+    userProfile: profile,
+    getUserProfile,
+  } = useCurrentUser();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const isPasswordEnabled = user?.providerData
           .reduce((acc, item) => {
@@ -60,6 +61,7 @@ export const useAuthState = () => {
         });
       } else {
         getCurrentUser({ isLoaded: true, isLoading: false });
+        getUserProfile(null);
       }
     });
     return unsubscribe;

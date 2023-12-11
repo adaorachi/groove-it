@@ -105,7 +105,8 @@ export const useFetchRecentPlayed = () => {
           // console.log(error);
         }
       } else {
-        throw new Error("Invalid userId");
+        return null;
+        // throw new Error("Invalid userId");
       }
     },
   });
@@ -119,7 +120,6 @@ export const useFetchMyPlaylists = () => {
   const { currentUser } = useCurrentUser();
   const { userId } = currentUser || {};
 
-  const [notify] = useNotification();
   const navigate = useNavigate();
 
   const { isPending, isSuccess, isError, isFetching, error, data } = useQuery({
@@ -138,16 +138,12 @@ export const useFetchMyPlaylists = () => {
             return { ...s, id: i.id, created_at: s.created_at.toDate() };
           });
         } catch (error) {
-          notify({
-            title: "Error",
-            variant: "error",
-            description: "Request failed",
-          });
           navigate("/");
           // console.log(error);
         }
       } else {
-        throw new Error("invalid params");
+        return null;
+        // throw new Error("invalid params");
       }
     },
   });

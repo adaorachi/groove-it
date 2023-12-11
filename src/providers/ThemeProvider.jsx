@@ -25,6 +25,10 @@ export default function ThemeProvider({ children }) {
     setTheme({ ...theme, ...themeLS, isMobile: !isMobile });
   }, [isMobile, userId]);
 
+  if (!theme?.color) {
+    return <>Loading..</>;
+  }
+
   return (
     <div className="app_container">
       {children}

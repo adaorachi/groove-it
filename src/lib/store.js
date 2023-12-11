@@ -177,5 +177,7 @@ export const usePlayerStore = create((set) => ({
 
 export const useCurrentUser = create((set) => ({
   currentUser: null,
+  userProfile: null,
   getCurrentUser: (value) => set(() => ({ currentUser: value })),
+  getUserProfile: (value) => set(() => ({ userProfile: value })),
 }));

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import useLocalStorage from "use-local-storage";
@@ -17,7 +18,7 @@ export const useGetProfile = () => {
   const [, setThemeLS] = useLocalStorage("groove-theme-config");
   const [, setPlayerLS] = useLocalStorage("groove-player");
 
-  const { currentUser } = useCurrentUser();
+  const { currentUser, getUserProfile } = useCurrentUser();
   const { user } = currentUser || {};
 
   const [prof, setProf] = useState(null);
@@ -26,7 +27,9 @@ export const useGetProfile = () => {
       setProf(doc?.data());
       setThemeLS(doc?.data()?.prefs);
       setPlayerLS(doc?.data()?.player);
+      getUserProfile(doc?.data());
     };
+
     const unsub = fbSnapshotDoc({
       collection: "users",
       id: user?.uid,
